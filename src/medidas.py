@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-# Función para la media
+
 def media(numbers: list) -> float:
 
     """Calcula la media de los elementos de una lista."""
@@ -9,7 +9,7 @@ def media(numbers: list) -> float:
     return round(sum(numbers) / len(numbers), 2)
 
 
-# Función para la mediana
+
 def mediana(numbers: list) -> float:
 
     """Calcula la mediana de los elementos de una lista."""
@@ -26,7 +26,7 @@ def mediana(numbers: list) -> float:
         return round(sorted_numbers[n // 2], 2)
     
 
-# Función para la moda
+
 def moda(numbers: list) -> float:
 
     """Calucla la moda de los elementos de una lista."""
@@ -48,7 +48,7 @@ def moda(numbers: list) -> float:
     return round(max(counts, key = counts.get), 2)
 
 
-# Función para los percentiles
+
 def percentil(numbers: list, pct: float) -> float:
 
     """Calcula el percentil correspondiente al porcentaje dado."""
@@ -64,7 +64,7 @@ def percentil(numbers: list, pct: float) -> float:
     return sorted_numbers[int(k) - 1]
 
 
-# Función para rango intercuartílico
+
 def IQR(numbers: list) -> float:
 
     """Calcula el rango intercuartílico (Q3 - Q1)."""
@@ -76,7 +76,7 @@ def IQR(numbers: list) -> float:
     return q3 - q1
 
 
-# Función para varianza
+
 def varianza(numbers: list) -> float:
 
     """Calcula la variabilidad de los elementos de una lista."""
@@ -87,7 +87,7 @@ def varianza(numbers: list) -> float:
     return round(sum((x - mu) ** 2 for x in numbers) / len(numbers), 2)
 
 
-# Función para std
+
 def desviacion_tipica(numbers: list) -> float:
 
     """Calcula la desviación típica de los elementos de una lista
@@ -96,7 +96,7 @@ def desviacion_tipica(numbers: list) -> float:
     return round(varianza(numbers) ** 0.5, 2)
 
 
-# Función para CV
+
 def cv(numbers: list) -> float:
 
     """Calcula el coeficiente de variación de los elementos de una lista."""
@@ -110,7 +110,7 @@ def cv(numbers: list) -> float:
     return (s/mu) * 100
 
 
-# Función para calcular asimetría
+
 def skewness(numbers: list):
 
     """Calcula el coeficiente de asimetría de la distribución 
@@ -122,10 +122,10 @@ def skewness(numbers: list):
     mu = media(numbers)
     s = desviacion_tipica(numbers)
 
-    return sum((x - mu) ** 3 for x in numbers) / ((n - 1) * s ** 3)
+    return round(sum((x - mu) ** 3 for x in numbers) / ((n - 1) * s ** 3), 2)
 
 
-# Función para calcular curtosis
+
 def kurtosis(numbers:list):
 
     """ Calcula la curtosis de la distribución correspondiente
@@ -137,7 +137,32 @@ def kurtosis(numbers:list):
     mu = media(numbers)
     s = desviacion_tipica(numbers)
 
-    return (sum((x - mu) ** 4 for x in numbers) / (s ** 4)) / n - 3
+    return round((sum((x - mu) ** 4 for x in numbers) / (n * s ** 4)) - 3, 2)
+
+
+
+def outliers_IQR(numbers: list) -> float:
+
+    """Detecta outliers en una lista usando el índice intercuartílico."""
+
+    # Calculando Q1, Q3 Y IQR
+    q1 = percentil(numbers, 0.25)
+    q3 = percentil(numbers, 0.75)
+
+    iqr = IQR(numbers)
+
+    # Calculando límites
+    l1 = q1 - 1.5 * iqr
+    s1 = q3 + 1.5 * iqr
+
+    # Contando outliers
+    n = 0
+
+    for number in numbers:
+        if number < l1 or number > s1:
+            n += 1
+
+    return n
 
 
 # Imprimir resultados
@@ -150,14 +175,17 @@ def medidas_centralidad(numbers: list):
     print("Percentil 75: ", percentil(numbers, 0.75))
     print("IQR: ", IQR(numbers))
 
+
 def medidas_dispersión(numbers: list):
     print(f"---> Medidas de dispersión:")
     print("Varianza: ", varianza(numbers))
     print("Desviación típica: ", desviacion_tipica(numbers))
     print("Coeficiente de variación: ", cv(numbers))
 
+
 def otras_medidas(numbers: list):
     print(f"---> Otras medidas:")
+    print("Número de outliers: ", outliers_IQR(numbers))
     print("Skewness (simetría): ", skewness(numbers))
     print("Curtosis (concentración): ", kurtosis(numbers))
 
@@ -169,6 +197,7 @@ def prints(data: dict):
         medidas_dispersión(v)
         otras_medidas(v)
         print("\n")
+
 
 
 if __name__ == "__main__":
