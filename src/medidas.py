@@ -118,7 +118,7 @@ def skewness(numbers: list):
 
     n = len(numbers)
 
-    # Caluclando media y std
+    # Calculando media y std
     mu = media(numbers)
     s = desviacion_tipica(numbers)
 
