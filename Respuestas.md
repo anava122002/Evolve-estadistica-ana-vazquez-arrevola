@@ -14,7 +14,9 @@ Añade aqui tu descripción y analisis:
 
 Los datos son parte del National Library of Medicine, concretamente del [**Dataset on anthropometric measurements of the adult population in Slovakia**](https://pmc.ncbi.nlm.nih.gov/articles/PMC11214164/).
 
-Ya tomé este dataset con anterioridad para estudiar estadísticamente la veracidad de las proporciones del hombre de Vitruvio con datos antropométricos reales. En este contexto tiene sentido, tomando la altura como variable objetivo, hacer una regresión lineal usando como variables independientes la envergadura o la longitud de las piernas, torso y cabeza para determinar su proporción en la altura total del cuerpo (los coeficientes *b_i* deberían ser las proporciones dadas por Vitruvio y Da Vinci, siendo *b_0* = 0, si es que interpretamos dichas proporciones como ecuaciones de la recta).
+Ya tomé este dataset con anterioridad para estudiar estadísticamente la veracidad de las proporciones del hombre de Vitruvio con datos antropométricos reales. En este contexto tiene sentido, tomando la altura como variable objetivo, hacer una regresión lineal usando como variables independientes la envergadura o la longitud de las piernas, torso y cabeza para determinar su proporción en la altura total del cuerpo (los coeficientes *b_i* deberían ser las proporciones dadas por Vitruvio y Da Vinci, forzando *b_0* = 0, si es que interpretamos dichas proporciones como ecuaciones de la recta).
+
+Tendría más sentido tomar el peso como variable objetivo y determinarlo según la altura, género... pero se necesitarían otras tantas variables que son determinantes pero no tienen que ver con la antropometría y por tanto faltan en el dataset.
 
 **Pregunta 1.2** — ¿Qué distribución tienen las principales variables numéricas y has encontrado outliers? Indica en qué variables y qué has decidido hacer con ellos.
 
@@ -39,14 +41,45 @@ La mayoría de columnas del dataset tienen más del 50% de sus datos nulos. Pues
 ## Ejercicio 2 — Inferencia con Scikit-Learn
 
 ---
-Añade aqui tu descripción y analisis:
+Puesto que es difícil evitar la multicolinealidad en datos antropométricos, en este caso se hará una regresión sobre las variables *gender*, *weight*, *arms_reach*, pues no están tan directamente relacionadas (independientemente de su coeficiente de correlación) con la variable objetivo *height* como, por ejemplo, *shoulder_height* o *leg_length*. 
+
+Para empezar, se binariza la variable *gender* y se toman solo las columnas del dataset que van a ser usadas, dividiéndolas en dos grupos para entrenar y testear. La recta de regresión resultante tiene la siguiente forma: 
+
+        y = 89.806 - 4.61373969 * X_{gender} + 0.12753115 * X_{weight} + 0.45162687 * X_{arms_reach}
+
+* La variable *gender* es la que tiene mayor peso en la regresión. Concretamente, el modelo estima que las mujeres (1) miden de media 4.6cm menos que los hombres (0). Es un resultado biológicamente coherente.
+
+* La variable *weight* parece no ser especialmente determinante. La altura aumenta 0.13cm por kg lo que, aunque indique una relación débil, también tiene sentido biológico.
+
+* La variable *arms_reach*, correspondiente a la envergadura, es ligeramente más influyente que el peso pero tampoco demasiado. El modelo estima que la altura aumenta 0.45cm por cada cm de envergadura. Una persona alta tiene los brazos más largos de media que una persona baja, por lo que tiene sentido.
+
+* El intercepto indica que, si el resto de variables son cero, la persona seguirá midiendo aprox. 90cm. En este contexto no tiene mucho valor.
+
+El coeficiente de determinación es 0.774, de modo que el modelo explica el 77.4% de la variación de la altura, lo cual indica un buen ajuste. Si lo comparamos con el resultante para los valores del test (0.73), vemos que el modelo generaliza bien y no hay overfitting.
+
+Pasando a los errores, vemos que el MAE es de 3.356cm y el RMSE de 4.387cm. Son relativamente grande teniendo en cuenta que estamos tratando de predecir datos antropométricos, pero no excesivos. Que se diferencien en poco más de 1cm indica que no hay errores muy grandes que estén inflando el RMSE (el modelo comete errores homogéneos).
+
+Finalmente, la gráfica de residuos muestra una nube de puntos sin patrón aparente lo que significa que siguen una distribución normal, condición necesaria para validar el modelo. A modo de confirmación se ha graficado también el Q-Q plot con resultados similares:
+
+<figure>
+  <img src="data/otros/qq_plot.png" width="400" height="300" alt="Descripción de la imagen">
+</figure>
 
 ---
 
 **Pregunta 2.1** — Indica los valores de MAE, RMSE y R² de la regresión lineal sobre el test set. ¿El modelo funciona bien? ¿Por qué?
 
-> _Escribe aquí tu respuesta_
+* MAE: 3.356
+* RMSE: 4.387
+* R²: 0.774
 
+El modelo funciona razonablemente bien. El coeficiente de determinación es lo suficientemente alto (> 0.7) como para asumir que la regresión tiene un buen ajuste. Además, que el error absoluto y cuadrático solo se diferencien en 1cm es indicativo de que no hay outliers con una gran penalización por parte del RMSE. Otro indicativo de esto mismo es la normalidad de los residuos.
+
+Aún así, al tratarse de datos antropométricos, un error de entre 3 y 4cm se puede considerar alto y puede crear una dispersión notoria en los resultados. Esto se ve en la siguiente imagen:
+
+<figure>
+  <img src="data/otros/dispersion_regresion.png" width="400" height="300" alt="Descripción de la imagen">
+</figure>
 
 ---
 

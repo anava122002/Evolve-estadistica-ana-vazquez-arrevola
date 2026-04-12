@@ -9,7 +9,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -71,6 +71,27 @@ def plot_residuos(pred_y: list, e: list):
     plt.show()
 
 
+# 3. Extra: Q-Q plot y comparación y-hat(y)
+
+def qq_plot(e: list):
+    plt.figure(figsize=(8,5))
+    stats.probplot(e, dist = 'norm', plot = plt)
+    plt.title('Q-Q PLOT')
+    plt.grid()
+    plt.show()
+
+
+def plot_y(pred_y: list, y_test: list):
+    plt.figure(figsize = (8, 5))
+    plt.scatter(y_test, pred_y, zorder = 3)
+    plt.xlabel('Valores reales')
+    plt.ylabel('Predicciones')
+    plt.title('COMPARACIÓN Y-hat(Y)')
+    plt.grid()
+    plt.savefig("output\\ej2_residuos.png")
+    plt.show()
+
+
 
 # 3. Archivo .txt
 def escribir_txt(reg_info: dict):
@@ -96,7 +117,7 @@ def main():
 
     # Definiendo variables independientes y objetivo
     y = df['height']
-    X = df[['gender', 'age', 'weight', 'arms_reach']]
+    X = df[['gender', 'weight', 'arms_reach']]
 
     # División de datos para training-testing
     X_train, X_test, y_train, y_test = train_test_split(
@@ -108,6 +129,9 @@ def main():
     # Predicción de valores
     pred_y, e = predecir_valores(reg, X_test, y_test)
 
+    # Determinando overfitting/underfitting
+    reg_results['R2 (test)'] = r2_score(y_test, pred_y)
+
     # Cálculo de errores MAE y MSE
     reg_results['MAE'] = mean_absolute_error(y_test, pred_y)
     reg_results['MSE'] = mean_squared_error(y_test, pred_y)
@@ -117,6 +141,10 @@ def main():
 
     # Gráfica de residuos
     plot_residuos(pred_y, e)
+
+    # Otras gráficas
+    qq_plot(e)
+    plot_y(pred_y, y_test)
 
 
 if __name__ == '__main__':
