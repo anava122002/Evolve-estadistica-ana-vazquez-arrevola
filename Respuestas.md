@@ -86,33 +86,51 @@ Aún así, al tratarse de datos antropométricos, un error de entre 3 y 4cm se p
 ## Ejercicio 3 — Regresión Lineal Múltiple en NumPy
 
 ---
-Añade aqui tu descripción y analisis:
+Para todas las funciones de este ejercicio se han seguido las indicaciones dadas:
+
+* Para la función *regresion_lineal_multiple* se añade una columna de unos tanto a X_train como a X_test con *np.hstack* y *np.ones*. Para calcular los coeficientes en lugar de invertir y multiplicar, se ha resuelto el sistema con *np.linalg.lstsq*. Para las predicciones simplemente se multiplica X_test por y_test.
+
+* Para *calcular_mae*, *calcular_rmse* y *calcular_r2* se ha implementado tal cual la definición de los estadísticos.
+
+Los resultados para los datos dados en el [ejercicio 3](ejercicio3_regresion_multiple.py) no difieren en exceso a las referencias. Para el dataset elegido se obtienen los mismos resultados que en [ejercicio 2](ejercicio2_inferencia.py). Se concluye entonces que las funciones cumplen con su objetivo.
 
 ---
 
 **Pregunta 3.1** — Explica en tus propias palabras qué hace la fórmula β = (XᵀX)⁻¹ Xᵀy y por qué es necesario añadir una columna de unos a la matriz X.
 
-> _Escribe aquí tu respuesta_
+La fórmula dada devuelve la estimación mediante mínimos cuadrados del vector de coeficientes de la recta de regresión lineal múltiple. El objetivo es hallar los coeficientes que minimizan la suma de cuadrados de los residuos, de modo que la recta resultante es la óptima. 
+
+La columna de unos que se tiene que añadir a la matriz X se corresponde con el escalar que multipla a b_0 en la ecuación. Si no se incluyera, no se podría incluir b_0 en el vector de coeficientes y por tanto no se podría calcular junto al resto (el vector de coeficientes y la matriz de observaciones tendrían dimensiones incompatibles para multiplicarlos). Es como asumir que existe una cierta variable observada X_0 que siempre es 1 y cuyo coeficiente será b_0.
 
 **Pregunta 3.2** — Copia aquí los cuatro coeficientes ajustados por tu función y compáralos con los valores de referencia del enunciado.
 
 | Parametro | Valor real | Valor ajustado |
 |-----------|-----------|----------------|
-| β₀        | 5.0       |                |
-| β₁        | 2.0       |                |
-| β₂        | -1.0      |                |
-| β₃        | 0.5       |                |
+| β₀        | 5.0       |   4.864995     |
+| β₁        | 2.0       |   2.063618     |
+| β₂        | -1.0      |   -1.117038    |
+| β₃        | 0.5       |   0.438517     |
 
-> _Escribe aquí tu respuesta_
+Los resultados son buenos en general. Los dos últimos coeficientes son quizás los más problemáticos por tener los mayores errores relativos, un 11.7% y un 12.3% sobre el valor real, pero tampoco presentan una diferencia preocupante.
 
 **Pregunta 3.3** — ¿Qué valores de MAE, RMSE y R² has obtenido? ¿Se aproximan a los de referencia?
 
-> _Escribe aquí tu respuesta_
+* MAE: 1.166462
+* RMSE: 1.461243
+* R²: 0.689672
 
-**Pregunta 3.4* — Compara los resultados con la reacción logística anterior para tu dataset y comprueba si el resultado es parecido. Explica qué ha sucedido. 
+Tanto el MAE como el RMSE están dentro del valor de referencia dado (±0.20), por lo que se consideran buenos resultados. El coeficiente de determinación, sin embargo, está ligeramente por debajo (-0.02 aprox.) de la referencia, aunque no es una diferencia preocupante.
 
-> _Escribe aquí tu respuesta_
+**Pregunta 3.4** — Compara los resultados con la reacción logística anterior para tu dataset y comprueba si el resultado es parecido. Explica qué ha sucedido. 
 
+Los resultados son:
+
+* Coeficientes: [89.80585654 -4.61373969  0.12753115  0.45162687]
+* MAE: 3.355615694718736
+* RMSE: 4.387199056773674
+* R2: 0.772467159702112
+
+Los resultados son exactamente iguales a los obtenidos en el ejercicio anterior. Lo que ha sucedido es que las funciones implementadas en este ejercicio cumplen la misma función que las de scikit-learn y calculan los resultados usando las mismas ecuaciones (las definiciones de los estadísticos).
 ---
 
 ## Ejercicio 4 — Series Temporales

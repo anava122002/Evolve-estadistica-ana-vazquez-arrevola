@@ -9,6 +9,7 @@ from scipy.stats import skew, kurtosis
 import matplotlib.pyplot as plt
 import seaborn as sns
 from IPython.display import display
+import math
 
 
 
@@ -125,7 +126,7 @@ def cambiar_type(data: pd.DataFrame, change_dict: dict) -> pd.DataFrame:
 
 
 # 4. Limpieza del df
-def limpiar_df(data: pd.DataFrame, column_names: list, change_dict: dict, new_names: None) -> pd.DataFrame:
+def limpiar_df(data: pd.DataFrame, column_names: list, change_dict: dict, new_names: list = None) -> pd.DataFrame:
 
     """
     Limpieza de DataFrame:
@@ -247,7 +248,7 @@ def eliminar_outliers(data: pd.DataFrame):
         elif column == 'gender':
             i = data[~ data['gender'].isin(['M', 'F'])].index
         elif column == 'year':
-            i = data[(data['year'].astype('float') < 2003) | (data['year'].astype('float') > 2023)]
+            i = data[(data['year'].astype('float') < 2003) | (data['year'].astype('float') > 2023)].index
         else:
             i = detectar_outliers(data, column)
         
@@ -268,7 +269,10 @@ def plot_density(data: pd.DataFrame, hist_bins = 10):
     numeric_data = data.select_dtypes(include=['number'])
     n = len(numeric_data.columns)
 
-    fig, axes = plt.subplots(2, int(n/2), figsize = (16, 8))
+    n_cols = 2  
+    n_rows = math.ceil(n / n_cols)
+
+    fig, axes = plt.subplots(n_cols, n_rows, figsize = (16, 8))
     axes = axes.flatten()
     
     for column, ax in zip(numeric_data.columns, axes):
@@ -402,6 +406,8 @@ def heatmap(data: pd.DataFrame):
 
     Guarda el resultado en "output/ej1_heatmap.png".
     """
+
+    data = data.copy()
 
     data['gender'] = data['gender'].map({'M': 0, 'F': 1})
 
