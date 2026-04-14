@@ -39,6 +39,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import os
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 # Crear carpeta de salida si no existe
 os.makedirs("output", exist_ok=True)
@@ -114,8 +115,17 @@ def visualizar_serie(serie):
     - Añade título, etiquetas de ejes y una cuadrícula suave
     - Guarda con plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
     """
-    # TODO: Implementa la visualización de la serie
-    pass
+    fig, ax = plt.subplots(figsize=(14, 4))
+
+    ax.plot(serie)
+
+    ax.set_xlabel('Years')
+    ax.set_ylabel('Values')
+    plt.title('VISUALIZACIÓN DE LA SERIE')
+
+    plt.grid()
+    plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
+    plt.show()
 
 
 # =============================================================================
@@ -144,11 +154,19 @@ def descomponer_serie(serie):
     - resultado.plot() genera los 4 subgráficos automáticamente
     - Guarda la figura con fig.savefig(...)
     """
-    # TODO: Implementa la descomposición
-    # resultado = seasonal_decompose(...)
-    # fig = resultado.plot()
-    # ...
-    pass
+    resultado = seasonal_decompose(serie, model='additive', period=365)
+
+    fig = resultado.plot()
+
+    for ax in fig.get_axes():
+        ax.grid(True)
+
+
+    plt.tight_layout()
+    plt.savefig("output/ej4_descomposicion.png", dpi=150, bbox_inches='tight')
+    plt.show()
+
+    return resultado
 
 
 # =============================================================================
@@ -186,31 +204,79 @@ def analizar_residuo(residuo):
     - ACF / PACF:
         from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     """
-    # TODO: Limpia el residuo (elimina NaN al inicio/fin)
-    residuo_limpio = None  # ← residuo.dropna()
+    # Limpia el residuo (elimina NaN al inicio/fin)
+    residuo_limpio = residuo.dropna()
 
-    # TODO: Calcula estadísticos básicos
-    media    = None
-    std      = None
-    asimetria = None
-    curtosis  = None
+    # Calcula estadísticos básicos
+    media    = residuo.mean()
+    std      = residuo.std()
+    asimetria = residuo.skew()
+    curtosis  = residuo.kurtosis()
+
+    print("----- Estadísticos descriptivos -----\n")
+    print(f"Media: {media}")
+    print(f"Desviación típica: {std}")
+    print(f"Asimetría: {asimetria}")
+    print(f"Curtosis: {curtosis}")
+
+    # Test de normalidad Jarque Bera
+    from scipy.stats import jarque_bera
+    stat, p = jarque_bera(residuo_limpio)
+
+    print(f"\n----- Test de Jarque Bera -----\np-valor: {p:.4f}")
+    print("Se acepta la normalidad." if p > 0.05 else "No se acepta la normalidad.")
+
+    # Test de estacionariedad (ADF)
+    from statsmodels.tsa.stattools import adfuller
+    resultado_adf = adfuller(residuo_limpio)
+    p_adf = resultado_adf[1]
+
+    print(f"\n----- ADF -----\np-valor: {p_adf:.4f}")
+    print("Estacionario" if p_adf < 0.05 else "No estacionario")
 
 
-    # TODO: Test de estacionariedad (ADF)
-    # from statsmodels.tsa.stattools import adfuller
-    # resultado_adf = adfuller(residuo_limpio)
-    # p_adf = resultado_adf[1]
+    # Gráfico ACF y PACF del residuo
+    from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-    # TODO: Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
-    pass
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
 
-    # TODO: Histograma del residuo con curva normal superpuesta
-    # → output/ej4_histograma_ruido.png
-    # Pista: usa scipy.stats.norm.pdf para la curva teórica
-    pass
+    plot_acf(residuo_limpio, lags=40, ax=ax1)
+    plot_pacf(residuo_limpio, lags=40, ax=ax2)
 
-    # TODO: Guardar estadísticos en output/ej4_analisis.txt
-    pass
+    for ax in fig.get_axes():
+        ax.grid(True)
+
+    plt.tight_layout()
+    plt.savefig('output/ej4_acf_pacf.png')
+    plt.show()
+
+    # Histograma del residuo con curva normal superpuesta
+    plt.figure(figsize=(5, 5))
+    plt.hist(residuo_limpio, bins=10, density=True, histtype='step', linewidth=3, edgecolor='steelblue')
+
+    from scipy.stats import norm
+
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    f_norm = norm.pdf(x, residuo_limpio.mean(), residuo_limpio.std())
+
+    plt.plot(x, f_norm, 'steelblue', linewidth=2, label='PDF Normal')
+    plt.grid()
+    plt.savefig('output/ej4_histograma_ruido.png')
+    plt.show()
+
+    # Guardar estadísticos
+    with open("output/ej4_analisis.txt", "w", encoding="utf-8") as archivo:
+        archivo.write("ESTADÍSTICOS DE LA SERIE TEMPORAL:\n\n")
+        print("----- Estadísticos descriptivos -----\n")
+        print(f"Media: {media}")
+        print(f"Desviación típica: {std}")
+        print(f"Asimetría: {asimetria}")
+        print(f"Curtosis: {curtosis}")
+        print(f"\n----- Test de Jarque Bera -----\np-valor: {p:.4f}")
+        print("Se acepta la normalidad." if p > 0.05 else "No se acepta la normalidad.")
+        print(f"\n----- ADF -----\np-valor: {p_adf:.4f}")
+        print("Estacionario" if p_adf < 0.05 else "No estacionario")
 
 
 # =============================================================================
