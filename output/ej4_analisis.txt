@@ -1,2 +1,15 @@
 ESTADÍSTICOS DE LA SERIE TEMPORAL:
 
+----- Estadísticos descriptivos -----
+Media: 0.1270780360985633
+Desviación típica: 3.2220429624963787
+Asimetría: -0.050917463365324815
+Curtosis: -0.06102752286356283
+
+----- Test de Jarque Bera -----
+p-valor: 0.5766
+Se acepta la normalidad.
+
+----- ADF -----
+p-valor: 0.0000
+Estacionario

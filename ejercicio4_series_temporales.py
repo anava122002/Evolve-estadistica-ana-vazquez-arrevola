@@ -224,7 +224,7 @@ def analizar_residuo(residuo):
     stat, p = jarque_bera(residuo_limpio)
 
     print(f"\n----- Test de Jarque Bera -----\np-valor: {p:.4f}")
-    print("Se acepta la normalidad." if p > 0.05 else "No se acepta la normalidad.")
+    print("Se acepta la normalidad." if p < 0.05 else "No se acepta la normalidad.")
 
     # Test de estacionariedad (ADF)
     from statsmodels.tsa.stattools import adfuller
@@ -268,15 +268,15 @@ def analizar_residuo(residuo):
     # Guardar estadísticos
     with open("output/ej4_analisis.txt", "w", encoding="utf-8") as archivo:
         archivo.write("ESTADÍSTICOS DE LA SERIE TEMPORAL:\n\n")
-        print("----- Estadísticos descriptivos -----\n")
-        print(f"Media: {media}")
-        print(f"Desviación típica: {std}")
-        print(f"Asimetría: {asimetria}")
-        print(f"Curtosis: {curtosis}")
-        print(f"\n----- Test de Jarque Bera -----\np-valor: {p:.4f}")
-        print("Se acepta la normalidad." if p > 0.05 else "No se acepta la normalidad.")
-        print(f"\n----- ADF -----\np-valor: {p_adf:.4f}")
-        print("Estacionario" if p_adf < 0.05 else "No estacionario")
+        archivo.write("----- Estadísticos descriptivos -----\n")
+        archivo.write(f"Media: {media}\n")
+        archivo.write(f"Desviación típica: {std}\n")
+        archivo.write(f"Asimetría: {asimetria}\n")
+        archivo.write(f"Curtosis: {curtosis}\n")
+        archivo.write(f"\n----- Test de Jarque Bera -----\np-valor: {p:.4f}\n")
+        archivo.write("Se acepta la normalidad.\n" if p < 0.05 else "No se acepta la normalidad.\n")
+        archivo.write(f"\n----- ADF -----\np-valor: {p_adf:.4f}\n")
+        archivo.write("Estacionario\n" if p_adf < 0.05 else "No estacionario\n")
 
 
 # =============================================================================

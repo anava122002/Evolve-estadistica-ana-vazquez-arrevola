@@ -88,7 +88,6 @@ def plot_y(pred_y: list, y_test: list):
     plt.ylabel('Predicciones')
     plt.title('COMPARACIÓN Y-hat(Y)')
     plt.grid()
-    plt.savefig("output/ej2_residuos.png")
     plt.show()
 
 

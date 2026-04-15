@@ -6,7 +6,18 @@
 
 ## Ejercicio 1 — Análisis Estadístico Descriptivo
 ---
-Añade aqui tu descripción y analisis:
+El dataset contiene una muestra de 11352 elementos de los cuales se observan 28 variables relacionadas con sus medidas corporales, teniendo varias de ellas muestran más de un 50% de datos faltantes. Puesto que interpolar tantos datos podría crear sesgos en los resultados y aún eliminando estas filas se siguen conservando casi 5000 elementos en la muestra (suficientes para la regresión), se ha decidido eliminarlos.
+También se han eliminado las columnas que no van a ser necesarias para la regresión (aunque se han conservado algunas más por si pudieran ser usadas también).
+
+Antes de empezar con el análisis estadístico, ha sido necesario cambiar el tipo de las variables de *str* a *float* y el nombre de las columnas a uno más simple para poder trabajar con el dataset. Fue necesario además hacer la búsqueda de outliers antes del análisis porque los primeros cálculos daban resultados que no eran posibles. En efecto, la mayoría de outliers presentes no se correspondían con medidas atípicas pero posibles (como que la mayoría de personas midan entre 160 y 180cm pero haya un registro de 200cm), sino que eran datos imposibles, probablemente mal escritos. Se consideraron varias alternativas, como sustituir el dato incorrecto interpolando o directamente con el valor de otra columna equivalente de la mismo observación (por ejemplo, se sabe que la altura es aproximadamente igual a la envergadura) pero, por simpleza al ser pocas este tipo de observaciones, se decidió eliminarlas.
+
+El análisis estadístico de los datos numéricos muestra que estamos trabajando con una muestra de personas jóvenes, de media 22 años y complexión delgada (176cm de altura y 71kg de media), lo que era de esperar pues los datos pertenecen a los estudiantes de una universidad de Eslovaquia. Aún así, vemos una gran variabilidad en la edad que se refleja concretamente en la diferencia de casi 60 años del cuartil 3 al máximo, indicando una distribución con una gran asimetría hacia la izquierda. Con el peso sucede algo parecido pero mucho más sutil. El resto de variables puede decirse que siguen una distribución normal, como así lo indican sus coeficientes de asimetría y curtosis, además de sus histogramas.
+
+Para trabajar con la única variable categórica del dataset (*gender*), se ha decidido crear a su vez otra nueva que refleje los distintos grupos de edad. El principal objetivo es obtener más información sobre la distribución de la edad, como qué otras edades se están contemplando en el dataset y en qué cantidad (se podrían haber recalculado los estadísticos para obtener una información más concreta pero se ha preferido no dispersarse mucho con respecto a la línea principal del ejercicio). En relación al género, vemos que la muestra está ligeramente descompensada, con un 58.84% de hombres y un 41.15% de mujeres, aunque no tanto como para llegar a ser un problema. Donde más diferencia hay es en el grupo juvenil, donde la proporción de hombres es más del doble que la de mujeres. Por el contrario, en los adultos la situación es la contraria, aunque es un grupo que no tiene gran relevancia en el total por no llegar ni al 3% del total. El grupo más numeroso es, sin duda, el de adultos jóvenes con un 68.51%.
+
+Si nos centramos ahora en la variable objetivo, vemos que la diferencia del peso entre hombres y mujeres aumenta con la edad. En los grupos más jóvenes la diferencia es, en ambos, de aproximadamente 20kg, teniendo los hombres de media entre 75 y 80kg y las mujeres algo menos de 60kg. Con los años también aumenta la variabilidad. En efecto, vemos como en el grupo adulto el rango intercuartílico es igual (para las mujerer) o mayor (para los hombres) de 20kg. Por último, vemos como existen bastantes datos atípicos por encima del máximo (1.5 veces el IRC), indicando la gran variabilidad a la que está sujeta el peso incluso dentro de un mismo grupo de edad.
+
+Por último, si observamos la matriz de correlación vemos que, como era de esperar, las medidas corporales como el largo de las piernas o la altura de los hombros están correladas positivamente a la altura con un coeficiente superior al 60%. A su vez, el peso también está correlacionado positivamente a las medidas del cuerpo pero en un grado algo menor (no se llegan a ver correlaciones con coeficientes del 0.91 o 0.84 por ejemplo) pues, aunque un cuerpo más grande tiene necesariamente una base más pesada, existen otros factores que afectan directamente al peso, como la alimentación, el ejercicio, posibles enfermedades endocrinas... El género también tiene una correlación significativa (-0.6) que refleja la diferencia ya vista en el boxplot (si suponemos que ser hombre es igual a 0 y mujer a 1). La edad es la variable con menor correlación (0.16).
 
 ---
 
@@ -137,7 +148,15 @@ Los resultados son exactamente iguales a los obtenidos en el ejercicio anterior.
 
 ## Ejercicio 4 — Series Temporales
 ---
-Añade aqui tu descripción y analisis:
+La serie temporal presenta una estructura bien definida al descomponerse en sus componentes fundamentales. 
+
+* La tendencia muestra un crecimiento casi lineal sostenido, lo que indica que el nivel medio de la variable aumenta progresivamente con el tiempo. Se observa una ligera aceleración en los años más recientes, especialmente a partir de 2021, lo que podría reflejar un cambio en la dinámica subyacente del proceso. 
+
+* La estacionalidad es muy marcada y tiene un patrón muy regular y consistente de carácter anual, por lo que puede asumirse que es un componente estructural importante de la serie. 
+
+* No se observan ciclos de medio o largo plazo. 
+
+El análisis de los residuos refuerza la calidad del modelo de descomposición, ya que estos se comportan como ruido aleatorio. Presentan una media cercana a cero (0.127) y una desviación típica moderada (3.22), lo que indica una dispersión controlada. Además, los coeficientes de asimetría (-0.051) y curtosis (-0.061) son cercanos a cero, lo que junto al histograma de los residuos permite aceptar la hipótesis de normalildad a pesar del resultado del test de Jarque-Bera, cuyo p-valor es 0.5766. Asimismo, el test ADF arroja un p-valor de 0.0000, indicando que los residuos son estacionarios. En resumen, se valida la adecuación de la descomposición realizada y se afirma que la serie está bien modelizada mediante sus componentes de tendencia y estacionalidad.
 
 ---
 

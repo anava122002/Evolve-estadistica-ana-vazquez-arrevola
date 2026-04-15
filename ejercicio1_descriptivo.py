@@ -329,7 +329,7 @@ def plot_boxplot(data: pd.DataFrame, column: str):
     plt.ylabel(column.replace('_', ' '))
     plt.grid()
         
-    plt.title('BOXPLOT DE LA ALTURA EN BASE AL GRUPO DE EDAD Y EL GÉNERO')
+    plt.title('BOXPLOT DEL PESO EN BASE AL GRUPO DE EDAD Y EL GÉNERO')
     plt.savefig("output/ej1_boxplots.png")
     plt.show()
         
@@ -413,7 +413,7 @@ def heatmap(data: pd.DataFrame):
 
     data = data.drop(['age_group'], axis = 1)
 
-    data.columns = ['Gender', 'Age','Weight' , 'Height', 'Shoulder', 'Arm span', 'Leg length']
+    data.columns = ['Gender', 'Age', 'Weight', 'Height', 'Shoulder', 'Arm span', 'Leg length']
 
     plt.figure(figsize = (8, 8))
     sns.heatmap(data.corr(), annot=True, linewidths=0.5, cmap = 'coolwarm')
@@ -478,7 +478,7 @@ def main():
     df['age_group'] = [set_age_group(age) for age in  df['age']]
 
     # Boxplot
-    plot_boxplot(df, 'height')
+    plot_boxplot(df, 'weight')
 
     # Frecuencias de variables categóricas
     display(frecuencias(df, 'gender'))
